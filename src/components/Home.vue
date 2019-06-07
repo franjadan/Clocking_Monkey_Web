@@ -1,3 +1,21 @@
 <template>
-    <div>Home</div>
+    <div>
+        <button @click.prevent="logout">SALIR</button>
+    </div>
 </template>
+
+<script>
+/* eslint-disable */
+import firebase from 'firebase';
+
+export default {
+    name: 'home',
+    methods: {
+        logout: function(){
+            firebase.auth().signOut().then(() => {
+                this.$router.go({ path: this.$router.path });
+            })
+        }
+    },
+}
+</script>
