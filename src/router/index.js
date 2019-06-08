@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import firebase from 'firebase'
 import Home from '@/components/Home'
 import Login from '@/components/Login'
+import Register from '@/components/Register'
 
 Vue.use(Router)
 
@@ -35,6 +36,14 @@ let router = new Router({
     {
       path: '/show',
       name: 'showAllowed',
+      meta: {
+        requiredAuth: true
+      }
+    },
+    {
+      path: '/register',
+      name: 'register',
+      component: Register,
       meta: {
         requiredAuth: true
       }

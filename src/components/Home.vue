@@ -5,17 +5,16 @@
 </template>
 
 <script>
-/* eslint-disable */
-import firebase from 'firebase';
+import firebase from 'firebase'
 
 export default {
-    name: 'home',
-    methods: {
-        logout: function(){
-            firebase.auth().signOut().then(() => {
-                this.$router.go({ path: this.$router.path });
-            })
-        }
-    },
+  name: 'home',
+  methods: {
+    logout: function () {
+      firebase.auth().signOut().then(() => {
+        this.$router.go({ path: this.$router.path })
+      })
+    }
+  }
 }
 </script>

@@ -1,9 +1,9 @@
 <template>
     <div class="container centered">
-        <div class="login shadow rounded">
+        <div class="login shadow rounded w-75">
             <div class="row">
                 <div class="col-md-4 login-left">
-                    <img src="../../media/clockingmonkey_logo.png" alt="Logo Clocking Monkey" class="w-100">
+                    <img src="../../media/clockingmonkey_logo.png" alt="Logo Clocking Monkey" class="w-75">
                     <h2 class="nameApp">Clocking Monkey</h2>
                 </div>
                 <div class="col-md-8 login-right">
@@ -11,14 +11,14 @@
                         <h3 class="title_login">Bienvenido</h3>
                         <h6>Accede a tu cuenta</h6>
                     </div>
-                    <form action="index.html" class="col-md-12">
+                    <form action="index.html" class="col-md-12 mt-3">
                         <div class="col-auto mt-2">
                             <label class="sr-only" for="inputEmail">Email</label>
                             <div class="input-group mb-2">
                                 <div class="input-group-prepend">
                                     <div class="input-group-text"><i class="fas fa-user"></i></div>
                                 </div>
-                                <input type="email" class="form-control" id="inputEmail" placeholder="clockingmonkey@example.es" v-model="email">
+                                <input type="email" class="form-control" id="inputEmail" placeholder="Email" v-model="email">
                             </div>
                         </div>
                         <div class="col-auto mt-2">
@@ -30,9 +30,12 @@
                                 <input type="password" class="form-control" id="inputPassword" placeholder="Password" v-model="password">
                             </div>
                         </div>
+                        <div class="alert alert-danger mt-3" v-if="error">
+                            <span class="error">{{ message }}</span>
+                        </div>
                         <div class="form-group mt-5">
-                            <button class="btn p-2" @click.prevent="register">¡Regístrate!</button>
-                            <button class="btn p-2" @click.prevent="login">Iniciar sesión</button>
+                            <button class="btn p-2 mr-2" @click.prevent="register">¡Regístrate!</button>
+                            <button class="btn p-2 ml-2" @click.prevent="login">Iniciar sesión</button>
                         </div>
                     </form>
                 </div>
@@ -42,39 +45,47 @@
 </template>
 
 <script>
-/* eslint-disable */
-import firebase from 'firebase';
+import firebase from 'firebase'
 
 export default {
-    name: 'login',
-    data: function() {
-        return {
-            email: '',
-            password: ''
-        };
-    },
-    methods: {
-        login: function(){
-            firebase.auth().signInWithEmailAndPassword(this.email, this.password).then(user => {
-                this.$router.go({ path: '/' });
-            },err => {
-                console.log(err.message);
-            });
-        },
-        register: function(){
-            firebase.firestore().collection("AllowedUsers").where("email", "==", this.email).get().then(query => {
-                if (query.size   > 0){
-                    firebase.auth().createUserWithEmailAndPassword(this.email, this.password).then(user => {
-                        this.$router.go({ path: '/' });
-                    },err => {
-                        console.log(err.message);
-                    });
-                }
-            },err => {
-                console.log(err.message);
-            })
-        }
+  name: 'login',
+  data: function () {
+    return {
+      email: '',
+      password: '',
+      message: 'mensaje',
+      error: false
     }
+  },
+  methods: {
+    login: function () {
+      firebase.auth().signInWithEmailAndPassword(this.email, this.password).then(user => {
+        this.$router.go({ path: '/' })
+      }, error => {
+        if (error) {
+          this.message = 'Esta dirección de correo electrónico no está registrada'
+          this.error = true
+        }
+      })
+    },
+    register: function () {
+      firebase.firestore().collection('AllowedUsers').where('email', '==', this.email).get().then(query => {
+        if (query.size > 0) {
+          firebase.auth().createUserWithEmailAndPassword(this.email, this.password).then(user => {
+            this.$router.go({ path: '/' })
+          }, error => {
+            if (error) {
+              this.message = 'Esta dirección de correo electrónico ya está en uso para otra cuenta'
+              this.error = true
+            }
+          })
+        } else {
+          this.message = 'Esta dirección de correo electrónico no está autorizada para registrarse'
+          this.error = true
+        }
+      })
+    }
+  }
 }
 </script>
 
@@ -139,4 +150,9 @@ export default {
         background-color: rgba(104,159,56);
         color: #ffffff;
     }
+
+    .error{
+        font-size: 1.25em;
+    }
+
 </style>
