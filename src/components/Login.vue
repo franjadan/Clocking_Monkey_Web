@@ -60,7 +60,7 @@ export default {
   methods: {
     login: function () {
       firebase.auth().signInWithEmailAndPassword(this.email, this.password).then(user => {
-        this.$router.go({ path: '/' })
+        this.$router.go({ path: this.$router.path })
       }, error => {
         if (error) {
           this.message = 'Esta dirección de correo electrónico no está registrada'
@@ -72,7 +72,7 @@ export default {
       firebase.firestore().collection('AllowedUsers').where('email', '==', this.email).get().then(query => {
         if (query.size > 0) {
           firebase.auth().createUserWithEmailAndPassword(this.email, this.password).then(user => {
-            this.$router.go({ path: '/' })
+            this.$router.push({ path: '/register' })
           }, error => {
             if (error) {
               this.message = 'Esta dirección de correo electrónico ya está en uso para otra cuenta'
@@ -154,5 +154,4 @@ export default {
     .error{
         font-size: 1.25em;
     }
-
 </style>
