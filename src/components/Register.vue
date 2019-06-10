@@ -13,19 +13,30 @@
             </div>
             <form action="index.html" class="p-5">
               <div class="m-2">
-                <input type="text" id="inputName" class="form-control" v-model="name" placeholder="Nombre">
+                <label for="inputName" class="text-left h6">Nombre:</label>
+                <input type="text" id="inputName" class="form-control" v-model="name">
               </div>
               <div class="m-2">
-                <input type="text" id="inputFirstLastname" class="form-control" v-model="firstLastname" placeholder="Primer apellido">
+                <label for="inputFirstLastname" class="text-left h6">Primer apellido:</label>
+                <input type="text" id="inputFirstLastname" class="form-control" v-model="firstLastname">
               </div>
               <div class="m-2">
-                <input type="text" id="inputSecondLasname" class="form-control" v-model="secondLastname" placeholder="Segundo apellido">
+                <label for="inputSecondLastname" class="text-left h6">Segundo apellido:</label>
+                <input type="text" id="inputSecondLasname" class="form-control" v-model="secondLastname">
               </div>
               <div class="m-2">
-                <input type="text" id="inputEmail" class="form-control" disabled v-model="email">
+                <label for="inputEmail" class="text-left h6">Email:</label>
+                <input type="email" id="inputEmail" class="form-control" v-model="email">
+              </div>
+              <div class="m-2">
+                <label for="inputPassword" class="text-left h6">Password:</label>
+                <input type="password" id="inputPassword" class="form-control" v-model="password">
+              </div>
+              <div class="alert alert-danger mt-3" v-if="error">
+                <span class="error">{{ message }}</span>
               </div>
               <div class="form-group mx-2 mt-5">
-                <button class="btn btn-block p-2" @click.prevent="save">Guardar datos</button>
+                <button class="btn btn-block p-2" @click.prevent="register">Registrar</button>
               </div>
             </form>
           </div>
@@ -43,28 +54,36 @@ export default {
     return {
       name: '',
       firstLastname: '',
-      secondLastname: ''
-    }
-  },
-  computed: {
-    email: function () {
-      return firebase.auth().currentUser.email
+      secondLastname: '',
+      email: '',
+      password: '',
+      message: '',
+      error: false
     }
   },
   methods: {
-    save: function () {
-      let data = {
-        name: this.name,
-        first_lastname: this.firstLastname,
-        second_lastname: this.secondLastname,
-        email: this.email
-      }
-
-      firebase.firestore().collection('Users').add(data).then(result => {
-        this.$router.push({ path: '/' })
-      }).catch(error => {
-        if (error) {
-          console.log(error.message)
+    register: function () {
+      firebase.firestore().collection('AllowedUsers').where('email', '==', this.email).get().then(query => {
+        if (query.size > 0) {
+          firebase.auth().createUserWithEmailAndPassword(this.email, this.password).then(user => {
+            let data = {
+              email: this.email,
+              first_lastname: this.firstLastname,
+              second_lastname: this.secondLastname,
+              name: this.name
+            }
+            firebase.firestore().collection('Users').add(data).then(result => {
+              this.$router.push({ path: '/' })
+            }).catch(error => {
+              if (error) {
+                this.message = 'Error al realizar el registro'
+                this.error = true
+              }
+            })
+          })
+        } else {
+          this.message = 'Esta dirección de correo electrónico no puede ser registrada'
+          this.error = true
         }
       })
     }
@@ -72,7 +91,7 @@ export default {
 }
 </script>
 
-<style scope>
+<style scoped>
   @font-face { font-family: computer_pixel-7; src: url('../../fonts/computer_pixel-7.ttf'); }
 
     h1,h2,h3,h4{
@@ -131,5 +150,9 @@ export default {
     .btn{
         background-color: rgba(104,159,56);
         color: #ffffff;
+    }
+
+    .error{
+      font-size: 1.25em;
     }
 </style>

@@ -45,7 +45,7 @@ let router = new Router({
       name: 'register',
       component: Register,
       meta: {
-        requiredAuth: true
+        requiredGuest: true
       }
     }
   ]

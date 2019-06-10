@@ -6,7 +6,7 @@
                     <img src="../../media/clockingmonkey_logo.png" alt="Logo Clocking Monkey" class="w-75">
                     <h2 class="nameApp">Clocking Monkey</h2>
                 </div>
-                <div class="col-md-8 login-right">
+                <div class="col-md-8 login-right p-3">
                     <div class="center">
                         <h3 class="title_login">Bienvenido</h3>
                         <h6>Accede a tu cuenta</h6>
@@ -33,9 +33,11 @@
                         <div class="alert alert-danger mt-3" v-if="error">
                             <span class="error">{{ message }}</span>
                         </div>
-                        <div class="form-group mt-5">
-                            <button class="btn p-2 mr-2" @click.prevent="register">¡Regístrate!</button>
-                            <button class="btn p-2 ml-2" @click.prevent="login">Iniciar sesión</button>
+                        <div class="mx-5 my-3">
+                          <button class="btn btn-block" @click.prevent="login">Iniciar sesión</button>
+                        </div>
+                        <div class="mx-5 my-3">
+                          <router-link class="btn btn-block" to="/register">¡Regístrate!</router-link>
                         </div>
                     </form>
                 </div>
@@ -53,7 +55,7 @@ export default {
     return {
       email: '',
       password: '',
-      message: 'mensaje',
+      message: '',
       error: false
     }
   },
@@ -67,29 +69,12 @@ export default {
           this.error = true
         }
       })
-    },
-    register: function () {
-      firebase.firestore().collection('AllowedUsers').where('email', '==', this.email).get().then(query => {
-        if (query.size > 0) {
-          firebase.auth().createUserWithEmailAndPassword(this.email, this.password).then(user => {
-            this.$router.push({ path: '/register' })
-          }, error => {
-            if (error) {
-              this.message = 'Esta dirección de correo electrónico ya está en uso para otra cuenta'
-              this.error = true
-            }
-          })
-        } else {
-          this.message = 'Esta dirección de correo electrónico no está autorizada para registrarse'
-          this.error = true
-        }
-      })
     }
   }
 }
 </script>
 
-<style scope>
+<style scoped>
     @font-face { font-family: computer_pixel-7; src: url('../../fonts/computer_pixel-7.ttf'); }
 
     h1,h2,h3,h4{
