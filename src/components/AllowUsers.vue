@@ -2,6 +2,24 @@
     <div>
         <Navbar :admin="true"/>
         <div class="container mt-5">
+            <form action="" class="my-5">
+                <h4>Añadir usuario permitido</h4>
+                <div class="row">
+                    <div class="m-2 col">
+                        <label for="inputEmail" class="text-left h6">Email:</label>
+                        <input type="email" name="" id="inputEmail" class="form-control" v-model="email">
+                    </div>
+                    <div class="m-2 col">
+                        <label for="selectRol" class="text-left h6">Rol:</label>
+                        <select name="" id="selectRol" class="form-control" v-model="rol">
+                            <option value="">Selecione un rol</option>
+                            <option value="Administrator">Administrador</option>
+                            <option value="Employee">Empleado</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="btn btn-save" @click="saveUser">Guardar</button>
+            </form>
             <ul class="list-group">
                 <li v-for="user in users" v-bind:key="user" class="list-group-item d-flex justify-content-between align-items-center">
                     <div>
@@ -25,7 +43,9 @@ export default {
   name: 'allowUsers',
   data: function () {
     return {
-      users: []
+      users: [],
+      email: '',
+      rol: ''
     }
   },
   created () {
@@ -74,6 +94,20 @@ export default {
           })
         }
       })
+    },
+    saveUser: function () {
+      let data = {
+        email: this.email,
+        rol: this.rol
+      }
+      firebase.firestore().collection('AllowedUsers').add(data).then(result => {
+        this.loadUsers()
+        this.email = ''
+      }, error => {
+        if (error) {
+          console.log(error.meesage)
+        }
+      })
     }
   },
   components: {
@@ -81,3 +115,10 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+    .btn-save{
+        background-color: rgba(104,159,56);
+        color: #ffffff;
+    }
+</style>
