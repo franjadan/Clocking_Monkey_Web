@@ -27,20 +27,6 @@ let router = new Router({
       }
     },
     {
-      path: '/allow',
-      name: 'allowEmail',
-      meta: {
-        requiredAuth: true
-      }
-    },
-    {
-      path: '/show',
-      name: 'showAllowed',
-      meta: {
-        requiredAuth: true
-      }
-    },
-    {
       path: '/register',
       name: 'register',
       component: Register,
