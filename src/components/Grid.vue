@@ -1,15 +1,17 @@
 <template>
     <div class="container mt-5">
         <form id="search">
-            <label for="query" class="mr-3">Buscar</label>
-            <input type="text" v-model="search" id="query" name="query" class="form-control w-25 d-inline">
+            <div>
+              <label for="query" class="mr-3">Buscar</label>
+              <input type="text" v-model="search" id="query" name="query" class="form-control w-75 d-inline">
+            </div>
+            <div>
+              <download-excel :data="filteredData" :fields="json_fields" worksheet="My Worksheet" name="filename.xls" class="btn p-2" v-if="admin"><i class="fas fa-file-download mr-1"></i> Descargar Excel</download-excel>
+            </div>
         </form>
-        <download-excel :data="filteredData" :fields="json_fields" worksheet="My Worksheet" name="filename.xls" class="btn" v-if="admin">
-          Descargar excel
-        </download-excel>
         <div id="grid-template">
             <div>
-                <table class="mt-4 table table-striped table-bordered text-center">
+                <table class="table table-striped table-bordered text-center">
                     <thead>
                         <tr>
                             <th v-for="(key, index) in columns" v-bind:key="index" scope="col">{{ key | capitalize}}</th>
@@ -103,5 +105,16 @@ export default {
   .btn{
     background-color: rgba(104,159,56);
     color: #ffffff;
+  }
+
+  #search{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5em;
+  }
+
+  #grid-template{
+    margin-top: 3em;
   }
 </style>

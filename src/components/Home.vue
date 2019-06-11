@@ -1,8 +1,9 @@
 <template>
-    <div class="container mt-5">
+    <div class="container">
         <button @click.prevent="logout">SALIR</button>
-        <h5>{{ user }}</h5>
-        <h6>Control de asistencia</h6>
+        <h5 class="my-2">{{ user }}</h5>
+        <hr/>
+        <h2 class="mt-2">Control de asistencia</h2>
         <grid :data="assists" :columns="columns" :keys="keys" :admin="admin"/>
     </div>
 </template>
