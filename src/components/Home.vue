@@ -1,16 +1,19 @@
 <template>
-    <div class="container">
-        <button @click.prevent="logout">SALIR</button>
+  <div>
+    <Navbar class="mb-5" :admin="admin"/>
+    <div class="container mt-2">
         <h5 class="my-2">{{ user }}</h5>
         <hr/>
         <h2 class="mt-2">Control de asistencia</h2>
         <grid :data="assists" :columns="columns" :keys="keys" :admin="admin"/>
     </div>
+  </div>
 </template>
 
 <script>
 import firebase from 'firebase'
 import Grid from './Grid'
+import Navbar from './Navbar'
 
 export default {
   name: 'home',
@@ -63,7 +66,8 @@ export default {
     }
   },
   components: {
-    Grid
+    Grid,
+    Navbar
   }
 }
 </script>
