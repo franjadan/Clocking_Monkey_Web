@@ -7,7 +7,7 @@
     <div class="collapse navbar-collapse" id="navbarNavDropdown">
         <ul class="navbar-nav d-flex justify-content-between w-100">
             <li class="nav-item active ml-5">
-                <router-link class="nav-link" to="allowUsers" v-if="admin">Usuarios Permitidos</router-link>
+                <router-link class="nav-link" to="/allowUsers" v-if="admin">Usuarios Permitidos</router-link>
             </li>
             <li class="nav-item dropdown mr-5">
                 <a class="nav-link mr-5" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-cogs mr-1"></i> Opciones <i class="fas fa-caret-down"></i></a>
