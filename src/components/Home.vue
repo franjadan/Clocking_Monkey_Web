@@ -1,9 +1,9 @@
 <template>
     <div class="container mt-5">
         <button @click.prevent="logout">SALIR</button>
-        <h5>{{ welcome }}</h5>
+        <h5>{{ user }}</h5>
         <h6>Control de asistencia</h6>
-        <grid :data="assists" :columns="columns" :keys="keys"/>
+        <grid :data="assists" :columns="columns" :keys="keys" :admin="admin"/>
     </div>
 </template>
 
@@ -25,12 +25,13 @@ export default {
   created () {
     firebase.firestore().collection('Users').where('email', '==', firebase.auth().currentUser.email).get().then(query => {
       if (query.size > 0) {
-        this.user = query.docs[0].data().name + ' ' + query.docs[0].data().first_lastname
+        this.user = 'Bienvenido ' + query.docs[0].data().name + ' ' + query.docs[0].data().first_lastname
       }
     })
     firebase.firestore().collection('AllowedUsers').where('email', '==', firebase.auth().currentUser.email).get().then(query => {
       if (query.size > 0) {
         if (query.docs[0].data().rol === 'Administrator') {
+          this.admin = true
           firebase.firestore().collection('Assists').get().then(query => {
             this.saveAssists(query)
           })
@@ -54,7 +55,7 @@ export default {
         let data = {
           email: doc.data().email,
           date: date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear() + ' ' + date.getHours() + ':' + date.getMinutes(),
-          type: doc.data().type
+          type: doc.data().type === true ? 'Entrada' : 'Salida'
         }
         this.assists.push(data)
       })
@@ -62,11 +63,6 @@ export default {
   },
   components: {
     Grid
-  },
-  computed: {
-    welcome: function () {
-      return 'Bienvenido ' + this.user
-    }
   }
 }
 </script>

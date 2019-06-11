@@ -4,6 +4,9 @@
             <label for="query" class="mr-3">Buscar</label>
             <input type="text" v-model="search" id="query" name="query" class="form-control w-25 d-inline">
         </form>
+        <download-excel :data="filteredData" :fields="json_fields" worksheet="My Worksheet" name="filename.xls" class="btn" v-if="admin">
+          Descargar excel
+        </download-excel>
         <div id="grid-template">
             <div>
                 <table class="mt-4 table table-striped table-bordered text-center">
@@ -31,18 +34,28 @@
 </template>
 
 <script>
+import Vue from 'vue'
+import JsonExcel from 'vue-json-excel'
+Vue.component('downloadExcel', JsonExcel)
+
 export default {
   name: 'grid',
   props: {
     data: Array,
     columns: Array,
-    keys: Array
+    keys: Array,
+    admin: ''
   },
   data () {
     return {
       search: '',
       startRow: 0,
-      rowsPerPage: 10
+      rowsPerPage: 10,
+      json_fields: {
+        'Usuario': 'email',
+        'Fecha': 'date',
+        'Tipo': 'type'
+      }
     }
   },
   computed: {
