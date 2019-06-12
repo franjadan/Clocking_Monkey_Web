@@ -5,6 +5,7 @@ import Home from '@/components/Home'
 import Login from '@/components/Login'
 import Register from '@/components/Register'
 import AllowUsers from '@/components/AllowUsers'
+import Profile from '@/components/Profile'
 
 Vue.use(Router)
 
@@ -39,6 +40,14 @@ let router = new Router({
       path: '/allowUsers',
       name: 'allowUsers',
       component: AllowUsers,
+      meta: {
+        requiredAuth: true
+      }
+    },
+    {
+      path: '/profile',
+      name: 'profile',
+      component: Profile,
       meta: {
         requiredAuth: true
       }

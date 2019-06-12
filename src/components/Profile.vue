@@ -1,0 +1,153 @@
+<template>
+    <div>
+        <Navbar :admin="admin"/>
+        <div class="container mt-5">
+            <h5 class="my-2">{{ user }}</h5>
+            <hr />
+            <div class="alert alert-danger text-center" v-if="error">
+                <span>{{ message }}</span>
+            </div>
+            <div class="alert alert-success text-center" v-if="success">
+                <span>{{ message }}</span>
+            </div>
+            <form action="" class="my-4 w-75 container">
+                <div class="m-2">
+                    <label for="inputName" class="text-left h5">Nombre:</label>
+                    <input type="text" class="form-control" id="inputName" v-model="name">
+                </div>
+                <div class="m-2">
+                    <label for="inputFirstLastname" class="text-left h5">Primer apellido:</label>
+                    <input type="text" class="form-control" id="inputFirstLastname" v-model="firstLastname">
+                </div>
+                <div class="m-2">
+                    <label for="inputSecondLastname" class="text-left h5">Segundo apellido:</label>
+                    <input type="text" class="form-control" id="inputSecondLastname" v-model="secondLastname">
+                </div>
+                <div class="mt-3">
+                    <button class="btn btn-save" @click.prevent="update">Guardar</button>
+                    <button class="btn btn-save ml-2" @click.prevent="activeForm">Cambiar Contraseña</button>
+                </div>
+                <form action="" v-if="active" class="mt-4">
+                    <div class="row">
+                        <div class="m-2 col">
+                            <label for="inputPassword" class="text-left h5">Nueva contraseña:</label>
+                            <input type="password" class="form-control" id="inputPassword" v-model="password">
+                        </div>
+                        <div class="m-2 col">
+                            <label for="inputConfirmPassword" class="text-left h5">Confirmar nueva contraseña:</label>
+                            <input type="password" class="form-control" id="inputConfirmPassword" v-model="confirmPassword">
+                        </div>
+                    </div>
+                    <div class="mt-1">
+                        <button class="btn btn-save" @click.prevent="updatePassword">Guardar</button>
+                        <button class="btn btn-danger" @click="activeForm">Cancelar</button>
+                    </div>
+                </form>
+            </form>
+        </div>
+    </div>
+</template>
+
+<script>
+import firebase from 'firebase'
+import Navbar from './Navbar'
+
+export default {
+  name: 'profile',
+  data: function () {
+    return {
+      admin: '',
+      name: '',
+      firstLastname: '',
+      secondLastname: '',
+      user: '',
+      active: false,
+      error: false,
+      message: '',
+      password: '',
+      confirmPassword: '',
+      success: false
+    }
+  },
+  created () {
+    this.isAdmin()
+    this.load()
+  },
+  methods: {
+    update: function () {
+      const promises = []
+      firebase.firestore().collection('Users').where('email', '==', firebase.auth().currentUser.email).get().then(query => {
+        query.forEach(doc => {
+          promises.push(
+            doc.ref.update({
+              name: this.name,
+              first_lastname: this.firstLastname,
+              second_lastname: this.secondLastname
+            })
+          )
+          return Promise.all(promises)
+        })
+      }).then(() => {
+        this.isAdmin()
+        this.load()
+      }, error => {
+        console.log(error.message)
+      })
+    },
+    load: function () {
+      firebase.firestore().collection('Users').where('email', '==', firebase.auth().currentUser.email).get().then(query => {
+        if (query.size > 0) {
+          this.user = query.docs[0].data().name + ' ' + query.docs[0].data().first_lastname + ' ' + query.docs[0].data().second_lastname
+          this.name = query.docs[0].data().name
+          this.firstLastname = query.docs[0].data().first_lastname
+          this.secondLastname = query.docs[0].data().second_lastname
+        }
+      })
+    },
+    isAdmin: function () {
+      firebase.firestore().collection('AllowedUsers').where('email', '==', firebase.auth().currentUser.email).get().then(query => {
+        if (query.size > 0) {
+          this.admin = query.docs[0].data().rol === 'Administrator'
+        }
+      })
+    },
+    activeForm: function () {
+      this.active = !this.active
+    },
+    updatePassword: function () {
+      if (this.password === this.confirmPassword) {
+        let user = firebase.auth().currentUser
+        let credential = firebase.auth.EmailAuthProvider.credential(user, this.password)
+        user.reauthenticateWithCredential(credential).then(() => {
+          user.updatePassword(this.password).then(() => {
+            this.message = 'Contraseña modificada con éxito'
+            this.success = true
+          }, error => {
+            if (error) {
+              this.message = 'Error al modificar la contraseña'
+              this.error = true
+            }
+          })
+        }, error => {
+          if (error) {
+            console.log(error.message)
+          }
+        })
+      } else {
+        this.message = 'La contraseñas no coinciden'
+        this.error = true
+      }
+    }
+  },
+  components: {
+    Navbar
+  }
+}
+</script>
+
+<style scoped>
+    .btn-save{
+        background-color: rgba(104,159,56);
+        color: #ffffff;
+    }
+</style>

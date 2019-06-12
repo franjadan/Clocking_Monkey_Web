@@ -13,6 +13,7 @@
   "dependencies": {
     "firebase": "^6.1.1",
     "vue": "^2.5.2",
+    "vue-async-computed": "^3.7.0",
     "vue-grid-layout": "^2.3.4",
     "vue-json-excel": "^0.2.98",
     "vue-router": "^3.0.1"
