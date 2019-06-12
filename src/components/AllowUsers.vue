@@ -2,7 +2,8 @@
     <div>
         <Navbar :admin="true"/>
         <div class="container mt-5">
-            <form action="" class="my-5">
+            <button class="btn btn-save mb-3" v-if="!active" @click.prevent="activeForm"><i class="fas fa-user-plus mr-1"></i> Añadir Usuario</button>
+            <form action="" class="my-5" v-if="active">
                 <h4>Añadir usuario permitido</h4>
                 <div class="row">
                     <div class="m-2 col">
@@ -12,22 +13,24 @@
                     <div class="m-2 col">
                         <label for="selectRol" class="text-left h6">Rol:</label>
                         <select name="" id="selectRol" class="form-control" v-model="rol">
-                            <option value="">Selecione un rol</option>
+                            <option value="" disabled>Selecione un rol</option>
                             <option value="Administrator">Administrador</option>
                             <option value="Employee">Empleado</option>
                         </select>
                     </div>
                 </div>
-                <button class="btn btn-save" @click="saveUser">Guardar</button>
+                <div class="mt-1">
+                  <button class="btn btn-save" @click="saveUser">Guardar</button>
+                  <button class="btn btn-danger" @click="activeForm">Cancelar</button>
+                </div>
             </form>
             <ul class="list-group">
                 <li v-for="user in users" v-bind:key="user" class="list-group-item d-flex justify-content-between align-items-center">
                     <div>
-                        <p>{{ user.email }}</p>
-                        <span>{{ user.rol }}</span>
+                        <span>{{ user.email }} ( {{user.rol}} )</span>
                     </div>
                     <div>
-                        <button class="btn btn-danger" @click="deleteUser(user)" type="submit">Descativar Usuario</button>
+                        <button class="btn btn-danger" @click="deleteUser(user)" type="submit">Desactivar Usuario</button>
                     </div>
                 </li>
             </ul>
@@ -45,7 +48,8 @@ export default {
     return {
       users: [],
       email: '',
-      rol: ''
+      rol: '',
+      active: false
     }
   },
   created () {
@@ -103,11 +107,15 @@ export default {
       firebase.firestore().collection('AllowedUsers').add(data).then(result => {
         this.loadUsers()
         this.email = ''
+        this.active = !this.active
       }, error => {
         if (error) {
           console.log(error.meesage)
         }
       })
+    },
+    activeForm: function () {
+      this.active = !this.active
     }
   },
   components: {
