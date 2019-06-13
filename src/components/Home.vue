@@ -21,7 +21,7 @@ export default {
     return {
       assists: [],
       columns: ['Usuario', 'Fecha', 'Tipo'],
-      keys: ['email', 'date', 'type'],
+      keys: ['email', 'date', 'type', 'fail'],
       admin: false,
       user: ''
     }
@@ -58,8 +58,9 @@ export default {
         let date = new Date(doc.data().date.seconds * 1000)
         let data = {
           email: doc.data().email,
-          date: date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear() + ' ' + date.getHours() + ':' + date.getMinutes(),
-          type: doc.data().type === true ? 'Entrada' : 'Salida'
+          date: ('0' + date.getDate()).slice(-2) + '/' + ('0' + (date.getMonth() + 1)).slice(-2) + '/' + date.getFullYear() + ' ' + ('0' + date.getHours()).slice(-2) + ':' + ('0' + date.getMinutes()).slice(-2),
+          type: doc.data().type === true ? 'Entrada' : 'Salida',
+          fail: doc.data().fail
         }
         this.assists.push(data)
       })

@@ -6,7 +6,7 @@
               <input type="text" v-model="search" id="query" name="query" class="form-control w-75 d-inline">
             </div>
             <div>
-              <download-excel :data="filteredData" :fields="json_fields" worksheet="My Worksheet" name="filename.xls" class="btn p-2" v-if="admin"><i class="fas fa-file-download mr-1"></i> Descargar Excel</download-excel>
+              <download-excel :data="filteredData" :fields="json_fields" worksheet="My Worksheet" name="asistencia.xls" class="btn p-2" v-if="admin"><i class="fas fa-file-download mr-1"></i> Descargar Excel</download-excel>
             </div>
         </form>
         <div id="grid-template">
@@ -20,7 +20,11 @@
                     <tbody>
                         <tr v-for="(entry, index) in dataPerPage" v-bind:key="index" scope="row">
                             <td v-for="(key, index) in keys" v-bind:key="index">
-                                {{ entry[key] }}
+                                <span v-if="key === 'fail'">
+                                  <i class="fas fa-times error" v-if="entry[key]"></i>
+                                  <i class="fas fa-check success" v-else></i>
+                                </span>
+                                <span v-else>{{ entry[key] }}</span>
                             </td>
                         </tr>
                     </tbody>
@@ -56,8 +60,22 @@ export default {
       json_fields: {
         'Usuario': 'email',
         'Fecha': 'date',
-        'Tipo': 'type'
-      }
+        'Tipo': 'type',
+        'Fallo': {
+          field: 'fail',
+          callback: (value) => {
+            return value === true ? 'Fallo' : ''
+          }
+        }
+      },
+      json_meta: [
+        [
+          {
+            'key': 'charset',
+            'value': 'utf-8'
+          }
+        ]
+      ]
     }
   },
   computed: {
@@ -116,5 +134,13 @@ export default {
 
   #grid-template{
     margin-top: 3em;
+  }
+
+  .error{
+    color: #A94442;
+  }
+
+  .success{
+    color: #457D46;
   }
 </style>
