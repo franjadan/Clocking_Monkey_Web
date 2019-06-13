@@ -36,11 +36,11 @@ export default {
       if (query.size > 0) {
         if (query.docs[0].data().rol === 'Administrator') {
           this.admin = true
-          firebase.firestore().collection('Assists').get().then(query => {
+          firebase.firestore().collection('Assists').orderBy('date', 'desc').get().then(query => {
             this.saveAssists(query)
           })
         } else {
-          firebase.firestore().collection('Assists').where('email', '==', firebase.auth().currentUser.email).get().then(query => {
+          firebase.firestore().collection('Assists').where('email', '==', firebase.auth().currentUser.email).orderBy('date', 'desc').get().then(query => {
             this.saveAssists(query)
           })
         }
