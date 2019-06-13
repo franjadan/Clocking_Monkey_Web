@@ -29,10 +29,10 @@
                 <input type="email" id="inputEmail" class="form-control" v-model="email">
               </div>
               <div class="m-2">
-                <label for="inputPassword" class="text-left h6">Password:</label>
+                <label for="inputPassword" class="text-left h6">Contraseña:</label>
                 <input type="password" id="inputPassword" class="form-control" v-model="password">
               </div>
-              <div class="alert alert-danger mt-3" v-if="error">
+              <div class="alert alert-danger mt-3 text-center" v-if="error">
                 <span class="error">{{ message }}</span>
               </div>
               <div class="form-group mx-2 mt-5">
@@ -65,27 +65,35 @@ export default {
     register: function () {
       firebase.firestore().collection('AllowedUsers').where('email', '==', this.email).get().then(query => {
         if (query.size > 0) {
-          firebase.auth().createUserWithEmailAndPassword(this.email, this.password).then(user => {
-            let data = {
-              email: this.email,
-              first_lastname: this.firstLastname,
-              second_lastname: this.secondLastname,
-              name: this.name
-            }
-            firebase.firestore().collection('Users').add(data).then(result => {
-              this.$router.push({ path: '/' })
-            }).catch(error => {
-              if (error) {
-                this.message = 'Error al realizar el registro'
-                this.error = true
+          if (this.isEmpty(this.name) || this.isEmpty(this.email) || this.isEmpty(this.firstLastname) || this.isEmpty(this.secondLastname) || this.isEmpty(this.password)) {
+            this.message = 'Campos obligatorios'
+            this.error = true
+          } else {
+            firebase.auth().createUserWithEmailAndPassword(this.email, this.password).then(user => {
+              let data = {
+                email: this.email,
+                first_lastname: this.firstLastname,
+                second_lastname: this.secondLastname,
+                name: this.name
               }
+              firebase.firestore().collection('Users').add(data).then(result => {
+                this.$router.push({ path: '/' })
+              }).catch(error => {
+                if (error) {
+                  this.message = 'Error al realizar el registro'
+                  this.error = true
+                }
+              })
             })
-          })
+          }
         } else {
           this.message = 'Esta dirección de correo electrónico no puede ser registrada'
           this.error = true
         }
       })
+    },
+    isEmpty: function (value) {
+      return value === ''
     }
   }
 }

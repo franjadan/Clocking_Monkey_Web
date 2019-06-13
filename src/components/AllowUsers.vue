@@ -19,6 +19,9 @@
                         </select>
                     </div>
                 </div>
+                <div class="alert alert-danger text-center mt-2" v-if="error">
+                  <span class="error">{{ message }}</span>
+                </div>
                 <div class="mt-1">
                   <button class="btn btn-save" @click="saveUser">Guardar</button>
                   <button class="btn btn-danger" @click="activeForm">Cancelar</button>
@@ -49,7 +52,9 @@ export default {
       users: [],
       email: '',
       rol: '',
-      active: false
+      active: false,
+      error: false,
+      message: ''
     }
   },
   created () {
@@ -100,22 +105,33 @@ export default {
       })
     },
     saveUser: function () {
-      let data = {
-        email: this.email,
-        rol: this.rol
-      }
-      firebase.firestore().collection('AllowedUsers').add(data).then(result => {
-        this.loadUsers()
-        this.email = ''
-        this.active = !this.active
-      }, error => {
-        if (error) {
-          console.log(error.meesage)
+      if (this.isEmpty(this.email) || !this.validSelect(this.rol)) {
+        this.message = 'Campos obligatorios'
+        this.error = true
+      } else {
+        let data = {
+          email: this.email,
+          rol: this.rol
         }
-      })
+        firebase.firestore().collection('AllowedUsers').add(data).then(result => {
+          this.loadUsers()
+          this.email = ''
+          this.active = !this.active
+        }, error => {
+          if (error) {
+            console.log(error.meesage)
+          }
+        })
+      }
     },
     activeForm: function () {
       this.active = !this.active
+    },
+    isEmpty: function (value) {
+      return value === ''
+    },
+    validSelect: function (value) {
+      return this.rol === 'Selecione un rol'
     }
   },
   components: {
