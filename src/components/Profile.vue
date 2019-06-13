@@ -11,38 +11,42 @@
                 <span>{{ message }}</span>
             </div>
             <form action="" class="my-4 w-75 container">
-                <div class="m-2">
-                    <label for="inputName" class="text-left h5">Nombre:</label>
-                    <input type="text" class="form-control" id="inputName" v-model="name">
+                <div v-if="!active">
+                  <div class="m-2">
+                      <label for="inputName" class="text-left h5">Nombre:</label>
+                      <input type="text" class="form-control" id="inputName" v-model="name">
+                  </div>
+                  <div class="m-2">
+                      <label for="inputFirstLastname" class="text-left h5">Primer apellido:</label>
+                      <input type="text" class="form-control" id="inputFirstLastname" v-model="firstLastname">
+                  </div>
+                  <div class="m-2">
+                      <label for="inputSecondLastname" class="text-left h5">Segundo apellido:</label>
+                      <input type="text" class="form-control" id="inputSecondLastname" v-model="secondLastname">
+                  </div>
+                  <div class="mt-3">
+                      <button class="btn btn-save" @click.prevent="update">Guardar</button>
+                      <button class="btn btn-save ml-2" @click.prevent="activeForm">Cambiar Contraseña</button>
+                  </div>
                 </div>
-                <div class="m-2">
-                    <label for="inputFirstLastname" class="text-left h5">Primer apellido:</label>
-                    <input type="text" class="form-control" id="inputFirstLastname" v-model="firstLastname">
+                <div v-else>
+                  <div class="m-2">
+                      <label for="inputOldPassword" class="text-left h5">Antigua contraseña:</label>
+                      <input type="password" class="form-control" id="inputOldPassword" v-model="oldPassword">
+                  </div>
+                  <div class="m-2">
+                      <label for="inputNewPassword" class="text-left h5">Nueva contraseña:</label>
+                      <input type="password" class="form-control" id="inputNewPassword" v-model="newPassword">
+                  </div>
+                  <div class="m-2">
+                      <label for="inputConfirmPassword" class="text-left h5">Confirmar contraseña:</label>
+                      <input type="password" class="form-control" id="inputConfirmPassword" v-model="confirmPassword">
+                  </div>
+                  <div class="mt-3">
+                      <button class="btn btn-save" @click.prevent="updatePassword">Guardar</button>
+                      <button class="btn btn-danger" @click="activeForm">Cancelar</button>
+                  </div>
                 </div>
-                <div class="m-2">
-                    <label for="inputSecondLastname" class="text-left h5">Segundo apellido:</label>
-                    <input type="text" class="form-control" id="inputSecondLastname" v-model="secondLastname">
-                </div>
-                <div class="mt-3">
-                    <button class="btn btn-save" @click.prevent="update">Guardar</button>
-                    <button class="btn btn-save ml-2" @click.prevent="activeForm">Cambiar Contraseña</button>
-                </div>
-                <form action="" v-if="active" class="mt-4">
-                    <div class="row">
-                        <div class="m-2 col">
-                            <label for="inputPassword" class="text-left h5">Nueva contraseña:</label>
-                            <input type="password" class="form-control" id="inputPassword" v-model="password">
-                        </div>
-                        <div class="m-2 col">
-                            <label for="inputConfirmPassword" class="text-left h5">Confirmar nueva contraseña:</label>
-                            <input type="password" class="form-control" id="inputConfirmPassword" v-model="confirmPassword">
-                        </div>
-                    </div>
-                    <div class="mt-1">
-                        <button class="btn btn-save" @click.prevent="updatePassword">Guardar</button>
-                        <button class="btn btn-danger" @click="activeForm">Cancelar</button>
-                    </div>
-                </form>
             </form>
         </div>
     </div>
@@ -64,7 +68,8 @@ export default {
       active: false,
       error: false,
       message: '',
-      password: '',
+      oldPassword: '',
+      newPassword: '',
       confirmPassword: '',
       success: false
     }
@@ -115,7 +120,7 @@ export default {
       this.active = !this.active
     },
     updatePassword: function () {
-      if (this.password === this.confirmPassword) {
+      /* if (this.password === this.confirmPassword) {
         let user = firebase.auth().currentUser
         let credential = firebase.auth.EmailAuthProvider.credential(user, this.password)
         user.reauthenticateWithCredential(credential).then(() => {
@@ -135,6 +140,28 @@ export default {
         })
       } else {
         this.message = 'La contraseñas no coinciden'
+        this.error = true
+      } */
+      if (this.newPassword === this.confirmPassword) {
+        let user = firebase.auth().currentUser
+        let credential = firebase.auth.EmailAuthProvider.credential(user.email, this.oldPassword)
+        user.reauthenticateWithCredential(credential).then(() => {
+          user.updatePassword(this.newPassword).then(() => {
+            this.message = 'Contraseña modificada con éxito'
+            this.success = true
+          }, error => {
+            if (error) {
+              this.message = 'Error al modificar la contraseña'
+              this.error = true
+            }
+          })
+        }, error => {
+          if (error) {
+            console.log(error.message)
+          }
+        })
+      } else {
+        this.message = 'Las contraseñas no coinciden'
         this.error = true
       }
     }
