@@ -80,24 +80,30 @@ export default {
   },
   methods: {
     update: function () {
-      const promises = []
-      firebase.firestore().collection('Users').where('email', '==', firebase.auth().currentUser.email).get().then(query => {
-        query.forEach(doc => {
-          promises.push(
-            doc.ref.update({
-              name: this.name,
-              first_lastname: this.firstLastname,
-              second_lastname: this.secondLastname
-            })
-          )
-          return Promise.all(promises)
+      if (this.isEmpty(this.name) || this.isEmpty(this.firstLastname) || this.isEmpty(this.secondLastname)) {
+        this.message = 'Campos obligatorios'
+        this.error = true
+      } else {
+        const promises = []
+        firebase.firestore().collection('Users').where('email', '==', firebase.auth().currentUser.email).get().then(query => {
+          query.forEach(doc => {
+            promises.push(
+              doc.ref.update({
+                name: this.name,
+                first_lastname: this.firstLastname,
+                second_lastname: this.secondLastname
+              })
+            )
+            this.error = false
+            return Promise.all(promises)
+          })
+        }).then(() => {
+          this.isAdmin()
+          this.load()
+        }, error => {
+          console.log(error.message)
         })
-      }).then(() => {
-        this.isAdmin()
-        this.load()
-      }, error => {
-        console.log(error.message)
-      })
+      }
     },
     load: function () {
       firebase.firestore().collection('Users').where('email', '==', firebase.auth().currentUser.email).get().then(query => {
@@ -118,52 +124,41 @@ export default {
     },
     activeForm: function () {
       this.active = !this.active
+      this.error = false
+      this.success = false
     },
     updatePassword: function () {
-      /* if (this.password === this.confirmPassword) {
-        let user = firebase.auth().currentUser
-        let credential = firebase.auth.EmailAuthProvider.credential(user, this.password)
-        user.reauthenticateWithCredential(credential).then(() => {
-          user.updatePassword(this.password).then(() => {
-            this.message = 'Contraseña modificada con éxito'
-            this.success = true
+      if (this.isEmpty(this.oldPassword) || this.isEmpty(this.newPassword) || this.isEmpty(this.confirmPassword)) {
+        this.message = 'Campos obligatorios'
+        this.error = true
+      } else {
+        if (this.newPassword === this.confirmPassword) {
+          let user = firebase.auth().currentUser
+          let credential = firebase.auth.EmailAuthProvider.credential(user.email, this.oldPassword)
+          user.reauthenticateWithCredential(credential).then(() => {
+            user.updatePassword(this.newPassword).then(() => {
+              this.message = 'Contraseña modificada con éxito'
+              this.success = true
+              this.error = false
+            }, error => {
+              if (error) {
+                this.message = 'Error al modificar la contraseña'
+                this.error = true
+              }
+            })
           }, error => {
             if (error) {
-              this.message = 'Error al modificar la contraseña'
-              this.error = true
+              console.log(error.message)
             }
           })
-        }, error => {
-          if (error) {
-            console.log(error.message)
-          }
-        })
-      } else {
-        this.message = 'La contraseñas no coinciden'
-        this.error = true
-      } */
-      if (this.newPassword === this.confirmPassword) {
-        let user = firebase.auth().currentUser
-        let credential = firebase.auth.EmailAuthProvider.credential(user.email, this.oldPassword)
-        user.reauthenticateWithCredential(credential).then(() => {
-          user.updatePassword(this.newPassword).then(() => {
-            this.message = 'Contraseña modificada con éxito'
-            this.success = true
-          }, error => {
-            if (error) {
-              this.message = 'Error al modificar la contraseña'
-              this.error = true
-            }
-          })
-        }, error => {
-          if (error) {
-            console.log(error.message)
-          }
-        })
-      } else {
-        this.message = 'Las contraseñas no coinciden'
-        this.error = true
+        } else {
+          this.message = 'Las contraseñas no coinciden'
+          this.error = true
+        }
       }
+    },
+    isEmpty: function (value) {
+      return value === ''
     }
   },
   components: {

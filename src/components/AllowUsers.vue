@@ -5,6 +5,9 @@
             <button class="btn btn-save mb-3" v-if="!active" @click.prevent="activeForm"><i class="fas fa-user-plus mr-1"></i> Añadir Usuario</button>
             <form action="" class="my-5" v-if="active">
                 <h4>Añadir usuario permitido</h4>
+                <div class="alert alert-danger text-center my-2" v-if="error">
+                  <span class="error">{{ message }}</span>
+                </div>
                 <div class="row">
                     <div class="m-2 col">
                         <label for="inputEmail" class="text-left h6">Email:</label>
@@ -18,9 +21,6 @@
                             <option value="Employee">Empleado</option>
                         </select>
                     </div>
-                </div>
-                <div class="alert alert-danger text-center mt-2" v-if="error">
-                  <span class="error">{{ message }}</span>
                 </div>
                 <div class="mt-1">
                   <button class="btn btn-save" @click="saveUser">Guardar</button>
@@ -126,6 +126,7 @@ export default {
     },
     activeForm: function () {
       this.active = !this.active
+      this.error = false
     },
     isEmpty: function (value) {
       return value === ''
