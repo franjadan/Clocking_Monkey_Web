@@ -21,7 +21,7 @@ export default {
     return {
       assists: [],
       columns: ['Usuario', 'Fecha', 'Tipo'],
-      keys: ['email', 'date', 'type', 'fail'],
+      keys: ['user', 'date', 'type', 'fail'],
       admin: false,
       user: ''
     }
@@ -37,11 +37,15 @@ export default {
         if (query.docs[0].data().rol === 'Administrator') {
           this.admin = true
           firebase.firestore().collection('Assists').orderBy('date', 'desc').get().then(query => {
-            this.saveAssists(query)
+            if (query.size > 0) {
+              this.saveAssists(query)
+            }
           })
         } else {
           firebase.firestore().collection('Assists').where('email', '==', firebase.auth().currentUser.email).orderBy('date', 'desc').get().then(query => {
-            this.saveAssists(query)
+            if (query.size > 0) {
+              this.saveAssists(query)
+            }
           })
         }
       }
@@ -57,12 +61,19 @@ export default {
       query.forEach(doc => {
         let date = new Date(doc.data().date.seconds * 1000)
         let data = {
-          email: doc.data().email,
+          user: this.getUser(doc.data().email),
           date: ('0' + date.getDate()).slice(-2) + '/' + ('0' + (date.getMonth() + 1)).slice(-2) + '/' + date.getFullYear() + ' ' + ('0' + date.getHours()).slice(-2) + ':' + ('0' + date.getMinutes()).slice(-2),
           type: doc.data().type === true ? 'Entrada' : 'Salida',
           fail: doc.data().fail
         }
         this.assists.push(data)
+      })
+    },
+    getUser: function (email) {
+      firebase.firestore().collection('Users').where('email', '==', email).get().then(query => {
+        if (query.size > 0) {
+          console.log(query.docs[0].data().name + ' ' + query.docs[0].data().first_lastname + ' ' + query.docs[0].data().second_lastname)
+        }
       })
     }
   },
