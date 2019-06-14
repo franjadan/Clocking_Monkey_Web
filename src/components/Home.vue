@@ -61,7 +61,7 @@ export default {
       query.forEach(doc => {
         let date = new Date(doc.data().date.seconds * 1000)
         let data = {
-          user: this.getUser(doc.data().email),
+          user: doc.data().email,
           date: ('0' + date.getDate()).slice(-2) + '/' + ('0' + (date.getMonth() + 1)).slice(-2) + '/' + date.getFullYear() + ' ' + ('0' + date.getHours()).slice(-2) + ':' + ('0' + date.getMinutes()).slice(-2),
           type: doc.data().type === true ? 'Entrada' : 'Salida',
           fail: doc.data().fail
