@@ -105,7 +105,7 @@ export default {
       })
     },
     saveUser: function () {
-      if (this.isEmpty(this.email) || !this.validSelect(this.rol)) {
+      if (this.isEmpty(this.email) || this.validSelect(this.rol)) {
         this.message = 'Campos obligatorios'
         this.error = true
       } else {
