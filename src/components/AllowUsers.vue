@@ -1,10 +1,10 @@
 <template>
-    <div>
+    <div class="background">
         <Navbar :admin="true"/>
-        <div class="container mt-5">
-            <button class="btn btn-save mb-3" v-if="!active" @click.prevent="activeForm"><i class="fas fa-user-plus mr-1"></i> Añadir Usuario</button>
-            <form action="" class="my-5" v-if="active">
-                <h4>Añadir usuario permitido</h4>
+        <div class="container p-5">
+            <button class="btn mb-3 mt-3 py-2 px-5 font-weight-bold btn-add" v-if="!active" @click.prevent="activeForm"><i class="fas fa-user-plus mr-1"></i> Añadir Usuario</button>
+            <form action="" class="mt-5 mb-5" v-if="active">
+                <h3>Añadir usuario permitido</h3>
                 <div class="alert alert-danger text-center my-2" v-if="error">
                   <span class="error">{{ message }}</span>
                 </div>
@@ -22,15 +22,15 @@
                         </select>
                     </div>
                 </div>
-                <div class="mt-1">
-                  <button class="btn btn-save" @click="saveUser">Guardar</button>
-                  <button class="btn btn-danger" @click="activeForm">Cancelar</button>
+                <div class="mt-3 mb-3">
+                  <button class="btn btn-save font-weight-bold mr-3" @click="saveUser">Guardar</button>
+                  <button class="btn btn-danger font-weight-bold" @click="activeForm">Cancelar</button>
                 </div>
             </form>
             <ul class="list-group">
                 <li v-for="user in users" v-bind:key="user" class="list-group-item d-flex justify-content-between align-items-center">
                     <div>
-                        <span>{{ user.email }} ( {{user.rol}} )</span>
+                        <span class="user">{{ user.email }} ( {{user.rol}} )</span>
                     </div>
                     <div>
                         <button class="btn btn-danger" @click="deleteUser(user)" type="submit">Desactivar Usuario</button>
@@ -142,8 +142,29 @@ export default {
 </script>
 
 <style scoped>
-    .btn-save{
-        background-color: rgba(104,159,56);
-        color: #ffffff;
-    }
+  h1,h2,h3,h4,h5,h6{
+    color: #282828;
+  }
+
+  .h1,.h2,.h3,.h4,.h5,.h6{
+    color: #282828;
+  }
+
+  .background{
+    background-color: #fcfff8;
+  }
+
+  .btn-add{
+    background-color: #c6dd6b;
+    color: #3d3d3d;
+  }
+
+  .user{
+    color: #282828;
+  }
+
+  .btn-save{
+    background-color: #3d3d3d;
+    color: #c6dd6b;
+  }
 </style>

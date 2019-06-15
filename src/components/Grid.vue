@@ -1,15 +1,15 @@
 <template>
     <div class="container mt-5">
-        <form id="search">
-            <div>
-              <label for="query" class="mr-3">Buscar</label>
-              <input type="text" v-model="search" id="query" name="query" class="form-control w-75 d-inline">
+        <form id="search" class="d-flex justify-content-between mt-3 mb-3">
+            <div class="d-flex align-items-center">
+              <label for="query" class="mr-5 h5">Filtrar</label>
+              <input type="text" v-model="search" id="query" name="query" class="form-control">
             </div>
             <div>
-              <download-excel :data="filteredData" :fields="json_fields" worksheet="My Worksheet" name="asistencia.xls" class="btn p-2" v-if="admin"><i class="fas fa-file-download mr-1"></i> Descargar Excel</download-excel>
+              <download-excel :data="filteredData" :fields="json_fields" worksheet="My Worksheet" name="asistencia.xls" class="btn-download btn py-2 px-5 font-weight-bold" v-if="admin"><i class="fas fa-file-download mr-1"></i> Descargar Excel</download-excel>
             </div>
         </form>
-        <div id="grid-template">
+        <div id="grid-template" class="mt-5 mb-5">
             <div>
                 <table class="table table-striped table-bordered text-center">
                     <thead>
@@ -32,9 +32,9 @@
             </div>
         </div>
         <div id="page-navigation" class="mt-5 row container">
-            <button @click="movePages(-1)" class="col btn">Anterior</button>
-            <span class="col text-center lead">{{ startRow / rowsPerPage + 1}} de {{ Math.ceil(filteredData.length / rowsPerPage) }}</span>
-            <button @click="movePages(1)" class="col btn">Siguiente</button>
+            <button @click="movePages(-1)" class="col btn btn-pages font-weight-bold"><i class="fas fa-arrow-left mr-1"></i> Anterior</button>
+            <span class="col text-center font-weight-bold h6">{{ startRow / rowsPerPage + 1}} de {{ Math.ceil(filteredData.length / rowsPerPage) }}</span>
+            <button @click="movePages(1)" class="col btn btn-pages font-weight-bold">Siguiente <i class="fas fa-arrow-right ml-1"></i></button>
         </div>
     </div>
 </template>
@@ -114,33 +114,33 @@ export default {
 </script>
 
 <style scoped>
-
-  thead th {
-    background-color: rgba(104,159,56);
-    color: #ffffff;
+  h1,h2,h3,h4,h5,h6{
+    color: #282828;
   }
 
-  .btn{
-    background-color: rgba(104,159,56);
-    color: #ffffff;
+  .h1,.h2,.h3,.h4,.h5,.h6{
+    color: #282828;
   }
-
-  #search{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5em;
-  }
-
-  #grid-template{
-    margin-top: 3em;
-  }
-
   .error{
     color: #A94442;
   }
 
   .success{
     color: #457D46;
+  }
+
+  .btn-download{
+    background-color: #c6dd6b;
+    color: #3d3d3d;
+  }
+
+  tr th{
+    background-color: #3d3d3d;
+    color: #c6dd6b;
+  }
+
+  .btn-pages{
+    background-color: #3d3d3d;
+    color: #c6dd6b;
   }
 </style>
