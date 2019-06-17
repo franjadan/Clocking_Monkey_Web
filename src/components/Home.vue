@@ -20,8 +20,8 @@ export default {
   data: function () {
     return {
       assists: [],
-      columns: ['Usuario', 'Fecha', 'Tipo'],
-      keys: ['user', 'date', 'type', 'fail'],
+      columns: ['Usuario', 'Fecha', 'Tipo', 'Comentario'],
+      keys: ['user', 'date', 'type', 'comment', 'fail'],
       admin: false,
       user: ''
     }
@@ -60,13 +60,22 @@ export default {
     saveAssists: function (query) {
       query.forEach(doc => {
         let date = new Date(doc.data().date.seconds * 1000)
-        let data = {
-          user: doc.data().email,
-          date: ('0' + date.getDate()).slice(-2) + '/' + ('0' + (date.getMonth() + 1)).slice(-2) + '/' + date.getFullYear() + ' ' + ('0' + date.getHours()).slice(-2) + ':' + ('0' + date.getMinutes()).slice(-2),
-          type: doc.data().type === true ? 'Entrada' : 'Salida',
-          fail: doc.data().fail
-        }
-        this.assists.push(data)
+        let email = doc.data().email
+        let assistance = ('0' + date.getDate()).slice(-2) + '/' + ('0' + (date.getMonth() + 1)).slice(-2) + '/' + date.getFullYear() + ' ' + ('0' + date.getHours()).slice(-2) + ':' + ('0' + date.getMinutes()).slice(-2)
+        let type = doc.data().type === true ? 'Entrada' : 'Salida'
+        let fail = doc.data().fail
+        let comment = doc.data().comment
+        firebase.firestore().collection('Users').where('email', '==', email).get().then(query => {
+          let name = query.docs[0].data().name + ' ' + query.docs[0].data().first_lastname
+          let data = {
+            user: name,
+            date: assistance,
+            type: type,
+            comment: comment,
+            fail: fail
+          }
+          this.assists.push(data)
+        })
       })
     },
     getUser: function (email) {
