@@ -1,8 +1,8 @@
 <template>
-    <div>
+    <div class="background">
         <Navbar :admin="admin"/>
-        <div class="container mt-5">
-            <h5 class="my-2">{{ user }}</h5>
+        <div class="container p-5">
+            <h3 class="my-2">{{ user }}</h3>
             <hr />
             <div class="alert alert-danger text-center" v-if="error">
                 <span>{{ message }}</span>
@@ -10,41 +10,41 @@
             <div class="alert alert-success text-center" v-if="success">
                 <span>{{ message }}</span>
             </div>
-            <form action="" class="my-4 w-75 container">
+            <form action="" class="mt-5 mb-5 w-75 container">
                 <div v-if="!active">
-                  <div class="m-2">
-                      <label for="inputName" class="text-left h5">Nombre:</label>
-                      <input type="text" class="form-control" id="inputName" v-model="name">
+                  <div class="mt-3 mb-3">
+                      <label for="inputName" class="text-left h5 mt-1 mb-1">Nombre:</label>
+                      <input type="text" class="form-control mt-1 mb-1" id="inputName" v-model="name">
                   </div>
-                  <div class="m-2">
-                      <label for="inputFirstLastname" class="text-left h5">Primer apellido:</label>
-                      <input type="text" class="form-control" id="inputFirstLastname" v-model="firstLastname">
+                  <div class="mt-3 mb-3">
+                      <label for="inputFirstLastname" class="text-left h5 mt-1 mb-1">Primer apellido:</label>
+                      <input type="text" class="form-control mt-1 mb-1" id="inputFirstLastname" v-model="firstLastname">
                   </div>
-                  <div class="m-2">
-                      <label for="inputSecondLastname" class="text-left h5">Segundo apellido:</label>
-                      <input type="text" class="form-control" id="inputSecondLastname" v-model="secondLastname">
+                  <div class="mt-3 mb-3">
+                      <label for="inputSecondLastname" class="text-left h5 mt-1 mb-1">Segundo apellido:</label>
+                      <input type="text" class="form-control" id="inputSecondLastname mt-1 mb-1" v-model="secondLastname">
                   </div>
-                  <div class="mt-3">
-                      <button class="btn btn-save" @click.prevent="update">Guardar</button>
-                      <button class="btn btn-save ml-2" @click.prevent="activeForm">Cambiar Contraseña</button>
+                  <div class="mt-4 mb-4">
+                      <button class="btn btn-save font-weight-bold" @click.prevent="update">Guardar</button>
+                      <button class="btn btn-password ml-3 font-weight-bold" @click.prevent="activeForm">Cambiar Contraseña</button>
                   </div>
                 </div>
                 <div v-else>
-                  <div class="m-2">
-                      <label for="inputOldPassword" class="text-left h5">Antigua contraseña:</label>
+                  <div class="mt-3 mb-3">
+                      <label for="inputOldPassword" class="text-left h5 mt-1 mb-1">Antigua contraseña:</label>
                       <input type="password" class="form-control" id="inputOldPassword" v-model="oldPassword">
                   </div>
-                  <div class="m-2">
-                      <label for="inputNewPassword" class="text-left h5">Nueva contraseña:</label>
+                  <div class="mt-3 mb-3">
+                      <label for="inputNewPassword" class="text-left h5 mt-1 mb-1">Nueva contraseña:</label>
                       <input type="password" class="form-control" id="inputNewPassword" v-model="newPassword">
                   </div>
-                  <div class="m-2">
-                      <label for="inputConfirmPassword" class="text-left h5">Confirmar contraseña:</label>
+                  <div class="mt-3 mb-3">
+                      <label for="inputConfirmPassword" class="text-left h5 mt-1 mb-1">Confirmar contraseña:</label>
                       <input type="password" class="form-control" id="inputConfirmPassword" v-model="confirmPassword">
                   </div>
-                  <div class="mt-3">
-                      <button class="btn btn-save" @click.prevent="updatePassword">Guardar</button>
-                      <button class="btn btn-danger" @click="activeForm">Cancelar</button>
+                  <div class="mt-4 mb-4">
+                      <button class="btn btn-save font-weight-bold" @click.prevent="updatePassword">Guardar</button>
+                      <button class="btn btn-danger font-weight-bold ml-3" @click="activeForm">Cancelar</button>
                   </div>
                 </div>
             </form>
@@ -168,8 +168,25 @@ export default {
 </script>
 
 <style scoped>
-    .btn-save{
-        background-color: rgba(104,159,56);
-        color: #ffffff;
-    }
+  h1,h2,h3,h4,h5,h6{
+    color: #282828;
+  }
+
+  .h1,.h2,.h3,.h4,.h5,.h6{
+    color: #282828;
+  }
+
+  .background{
+    background-color: #fcfff8;
+  }
+
+  .btn-save{
+    background-color: #3d3d3d;
+    color: #c6dd6b;
+  }
+
+  .btn-password{
+    background-color: #c6dd6b;
+    color: #3d3d3d;
+  }
 </style>

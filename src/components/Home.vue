@@ -1,8 +1,8 @@
 <template>
-  <div>
+  <div class="background">
     <Navbar class="mb-5" :admin="admin"/>
-    <div class="container mt-2">
-        <h5 class="my-2">{{ user }}</h5>
+    <div class="container mt-5 mb-5">
+        <h3 class="my-2">{{ user }}</h3>
         <hr/>
         <h2 class="mt-2">Control de asistencia</h2>
         <grid :data="assists" :columns="columns" :keys="keys" :admin="admin"/>
@@ -83,3 +83,17 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+  h1,h2,h3,h4,h5,h6{
+    color: #282828;
+  }
+
+  .h1,.h2,.h3,.h4,.h5,.h6{
+    color: #282828;
+  }
+
+  .background{
+    background-color: #fcfff8;
+  }
+</style>

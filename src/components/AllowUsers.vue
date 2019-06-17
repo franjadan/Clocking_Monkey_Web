@@ -1,10 +1,10 @@
 <template>
-    <div>
+    <div class="background">
         <Navbar :admin="true"/>
-        <div class="container mt-5">
-            <button class="btn btn-save mb-3" v-if="!active" @click.prevent="activeForm"><i class="fas fa-user-plus mr-1"></i> Añadir Usuario</button>
-            <form action="" class="my-5" v-if="active">
-                <h4>Añadir usuario permitido</h4>
+        <div class="container p-5">
+            <button class="btn mb-3 mt-3 py-2 px-5 font-weight-bold btn-add" v-if="!active" @click.prevent="activeForm"><i class="fas fa-user-plus mr-1"></i> Añadir Usuario</button>
+            <form action="" class="mt-5 mb-5" v-if="active">
+                <h3>Añadir usuario permitido</h3>
                 <div class="alert alert-danger text-center my-2" v-if="error">
                   <span class="error">{{ message }}</span>
                 </div>
@@ -22,18 +22,20 @@
                         </select>
                     </div>
                 </div>
-                <div class="mt-1">
-                  <button class="btn btn-save" @click="saveUser">Guardar</button>
-                  <button class="btn btn-danger" @click="activeForm">Cancelar</button>
+                <div class="mt-3 mb-3">
+                  <button class="btn btn-save font-weight-bold mr-3" @click="saveUser">Guardar</button>
+                  <button class="btn btn-danger font-weight-bold" @click="activeForm">Cancelar</button>
                 </div>
             </form>
             <ul class="list-group">
                 <li v-for="user in users" v-bind:key="user" class="list-group-item d-flex justify-content-between align-items-center">
                     <div>
-                        <span>{{ user.email }} ( {{user.rol}} )</span>
+                        <p class="user">{{ user.name }}</p>
+                        <p class="user">{{ user.email }}, ({{ user.rol }})</p>
                     </div>
-                    <div>
-                        <button class="btn btn-danger" @click="deleteUser(user)" type="submit">Desactivar Usuario</button>
+                    <div class="mr-2">
+                        <button  v-if="user.active" class="btn btn-custom btn-danger font-weight-bold" @click="activeUser(user, false)" type="submit">Desactivar</button>
+                        <button  v-else class="btn btn-custom btn-success font-weight-bold" @click="activeUser(user, true)" type="submit">Activar</button>
                     </div>
                 </li>
             </ul>
@@ -61,51 +63,45 @@ export default {
     this.loadUsers()
   },
   methods: {
-    deleteUser: function (user) {
+    activeUser: function (user, active) {
       const promises = []
       firebase.firestore().collection('Users').where('email', '==', user.email).get().then(query => {
         query.forEach(doc => {
           promises.push(
             doc.ref.update({
-              active: false
+              active: active
             })
           )
           return Promise.all(promises)
         })
       }).then(() => {
-        firebase.firestore().collection('AllowedUsers').where('email', '==', user.email).get().then(query => {
-          query.forEach(doc => {
-            doc.ref.delete().then(() => {
-              this.loadUsers()
-            }, error => {
-              if (error) {
-                console.log(error.meesage)
-              }
-            })
-          })
-        })
-      }, error => {
-        if (error) {
-          console.log(error.message)
-        }
+        this.loadUsers()
       })
     },
     loadUsers: function () {
       this.users = []
-      firebase.firestore().collection('AllowedUsers').get().then(query => {
+      firebase.firestore().collection('Users').get().then(query => {
         if (query.size > 0) {
           query.forEach(doc => {
-            let data = {
-              email: doc.data().email,
-              rol: doc.data().rol === 'Administrator' ? 'Administrador' : 'Empleado'
-            }
-            this.users.push(data)
+            let name = doc.data().name + ' ' + doc.data().first_lastname + ' ' + doc.data().second_lastname
+            let active = doc.data().active
+            let email = doc.data().email
+            firebase.firestore().collection('AllowedUsers').where('email', '==', email).get().then(query => {
+              let rol = query.docs[0].data().rol === 'Administrator' ? 'Administrador' : 'Empleado'
+              let data = {
+                name: name,
+                email: email,
+                active: active,
+                rol: rol
+              }
+              this.users.push(data)
+            })
           })
         }
       })
     },
     saveUser: function () {
-      if (this.isEmpty(this.email) || !this.validSelect(this.rol)) {
+      if (this.isEmpty(this.email) || this.validSelect(this.rol)) {
         this.message = 'Campos obligatorios'
         this.error = true
       } else {
@@ -142,8 +138,33 @@ export default {
 </script>
 
 <style scoped>
-    .btn-save{
-        background-color: rgba(104,159,56);
-        color: #ffffff;
-    }
+  h1,h2,h3,h4,h5,h6{
+    color: #282828;
+  }
+
+  .h1,.h2,.h3,.h4,.h5,.h6{
+    color: #282828;
+  }
+
+  .background{
+    background-color: #fcfff8;
+  }
+
+  .btn-add{
+    background-color: #c6dd6b;
+    color: #3d3d3d;
+  }
+
+  .user{
+    color: #282828;
+  }
+
+  .btn-save{
+    background-color: #3d3d3d;
+    color: #c6dd6b;
+  }
+
+  .btn-custom{
+    width: 8em;
+  }
 </style>
