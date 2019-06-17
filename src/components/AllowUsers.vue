@@ -30,10 +30,12 @@
             <ul class="list-group">
                 <li v-for="user in users" v-bind:key="user" class="list-group-item d-flex justify-content-between align-items-center">
                     <div>
-                        <span class="user">{{ user.email }} ( {{user.rol}} )</span>
+                        <p>{{ user.name }}</p>
+                        <p>{{ user.email }}, ({{ user.rol }})</p>
                     </div>
                     <div>
-                        <button class="btn btn-danger" @click="deleteUser(user)" type="submit">Desactivar Usuario</button>
+                        <button  v-if="user.active" class="btn btn-danger" @click="activeUser(user, false)" type="submit">Desactivar</button>
+                        <button  v-else class="btn btn-success" @click="activeUser(user, true)" type="submit">Activar</button>
                     </div>
                 </li>
             </ul>
@@ -61,51 +63,45 @@ export default {
     this.loadUsers()
   },
   methods: {
-    deleteUser: function (user) {
+    activeUser: function (user, active) {
       const promises = []
       firebase.firestore().collection('Users').where('email', '==', user.email).get().then(query => {
         query.forEach(doc => {
           promises.push(
             doc.ref.update({
-              active: false
+              active: active
             })
           )
           return Promise.all(promises)
         })
       }).then(() => {
-        firebase.firestore().collection('AllowedUsers').where('email', '==', user.email).get().then(query => {
-          query.forEach(doc => {
-            doc.ref.delete().then(() => {
-              this.loadUsers()
-            }, error => {
-              if (error) {
-                console.log(error.meesage)
-              }
-            })
-          })
-        })
-      }, error => {
-        if (error) {
-          console.log(error.message)
-        }
+        this.loadUsers()
       })
     },
     loadUsers: function () {
       this.users = []
-      firebase.firestore().collection('AllowedUsers').get().then(query => {
+      firebase.firestore().collection('Users').get().then(query => {
         if (query.size > 0) {
           query.forEach(doc => {
-            let data = {
-              email: doc.data().email,
-              rol: doc.data().rol === 'Administrator' ? 'Administrador' : 'Empleado'
-            }
-            this.users.push(data)
+            let name = doc.data().name + ' ' + doc.data().first_lastname + ' ' + doc.data().second_lastname
+            let active = doc.data().active
+            let email = doc.data().email
+            firebase.firestore().collection('AllowedUsers').where('email', '==', email).get().then(query => {
+              let rol = query.docs[0].data().rol === 'Administrator' ? 'Administrador' : 'Empleado'
+              let data = {
+                name: name,
+                email: email,
+                active: active,
+                rol: rol
+              }
+              this.users.push(data)
+            })
           })
         }
       })
     },
     saveUser: function () {
-      if (this.isEmpty(this.email) || !this.validSelect(this.rol)) {
+      if (this.isEmpty(this.email) || this.validSelect(this.rol)) {
         this.message = 'Campos obligatorios'
         this.error = true
       } else {
