@@ -30,12 +30,12 @@
             <ul class="list-group">
                 <li v-for="user in users" v-bind:key="user" class="list-group-item d-flex justify-content-between align-items-center">
                     <div>
-                        <p>{{ user.name }}</p>
-                        <p>{{ user.email }}, ({{ user.rol }})</p>
+                        <p class="user">{{ user.name }}</p>
+                        <p class="user">{{ user.email }}, ({{ user.rol }})</p>
                     </div>
-                    <div>
-                        <button  v-if="user.active" class="btn btn-danger" @click="activeUser(user, false)" type="submit">Desactivar</button>
-                        <button  v-else class="btn btn-success" @click="activeUser(user, true)" type="submit">Activar</button>
+                    <div class="mr-2">
+                        <button  v-if="user.active" class="btn btn-custom btn-danger font-weight-bold" @click="activeUser(user, false)" type="submit">Desactivar</button>
+                        <button  v-else class="btn btn-custom btn-success font-weight-bold" @click="activeUser(user, true)" type="submit">Activar</button>
                     </div>
                 </li>
             </ul>
@@ -162,5 +162,9 @@ export default {
   .btn-save{
     background-color: #3d3d3d;
     color: #c6dd6b;
+  }
+
+  .btn-custom{
+    width: 8em;
   }
 </style>
