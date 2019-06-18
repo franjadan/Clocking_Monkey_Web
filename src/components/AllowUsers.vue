@@ -31,7 +31,7 @@
                 <li v-for="user in users" v-bind:key="user" class="list-group-item d-flex justify-content-between align-items-center">
                     <div>
                         <p class="user">{{ user.name }}</p>
-                        <p class="user">{{ user.email }}, ({{ user.rol }})</p>
+                        <p class="user">{{ user.email }} ({{ user.rol }})</p>
                     </div>
                     <div class="mr-2">
                         <button  v-if="user.active" class="btn btn-custom btn-danger font-weight-bold" @click="activeUser(user, false)" type="submit">Desactivar</button>
@@ -80,14 +80,14 @@ export default {
     },
     loadUsers: function () {
       this.users = []
-      firebase.firestore().collection('Users').get().then(query => {
-        if (query.size > 0) {
-          query.forEach(doc => {
-            let name = doc.data().name + ' ' + doc.data().first_lastname + ' ' + doc.data().second_lastname
-            let active = doc.data().active
-            let email = doc.data().email
-            firebase.firestore().collection('AllowedUsers').where('email', '==', email).get().then(query => {
-              let rol = query.docs[0].data().rol === 'Administrator' ? 'Administrador' : 'Empleado'
+      firebase.firestore().collection('AllowedUsers').get().then(query => {
+        query.forEach(doc => {
+          let email = doc.data().email
+          let rol = doc.data().rol === 'Administrator' ? 'Administrador' : 'Empleado'
+          firebase.firestore().collection('Users').where('email', '==', email).get().then(query => {
+            if (query.size > 0) {
+              let name = query.docs[0].data().name + ' ' + query.docs[0].data().first_lastname + ' ' + query.docs[0].data().second_lastname
+              let active = query.docs[0].data().active
               let data = {
                 name: name,
                 email: email,
@@ -95,9 +95,17 @@ export default {
                 rol: rol
               }
               this.users.push(data)
-            })
+            } else {
+              let data = {
+                name: ' ',
+                email: email,
+                active: ' ',
+                rol: rol
+              }
+              this.users.push(data)
+            }
           })
-        }
+        })
       })
     },
     saveUser: function () {
