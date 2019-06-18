@@ -76,7 +76,8 @@ export default {
                 email: this.email,
                 first_lastname: this.firstLastname,
                 second_lastname: this.secondLastname,
-                name: this.name
+                name: this.name,
+                active: true
               }
               firebase.firestore().collection('Users').add(data).then(result => {
                 this.$router.push({ path: '/' })
