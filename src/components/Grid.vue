@@ -58,7 +58,7 @@ export default {
       startRow: 0,
       rowsPerPage: 10,
       json_fields: {
-        'Usuario': 'email',
+        'Usuario': 'user',
         'Fecha': 'date',
         'Tipo': 'type',
         'Fallo': {
