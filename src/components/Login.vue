@@ -1,7 +1,7 @@
 <template>
     <div class="background">
         <div class="container centered">
-            <div class="login shadow-lg rounded w-75">
+            <div class="login shadow-lg w-75">
                 <div class="row d-flex align-items-center">
                     <div class="col-md-4 login-left">
                         <img src="../../media/clockingmonkey_logo.png" alt="Logo Clocking Monkey" class="w-75">
@@ -108,7 +108,9 @@ export default {
     }
 
     .login{
-        background: rgba(40, 40, 40, 0.9);
+        background: rgba(40, 40, 40, 0.8);
+        border-top-left-radius: 10% 50%;
+        border-bottom-left-radius: 10% 50%;
         margin-top: 3%;
         padding: 3%;
     }

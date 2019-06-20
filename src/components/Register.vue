@@ -1,7 +1,7 @@
 <template>
     <div class="background">
       <div class="container centered">
-        <div class="register shadow-lg rounded w-75 mb-5">
+        <div class="register shadow-lg w-75 mb-5">
           <div class="row d-flex align-items-center">
             <div class="col-md-4 register-left">
               <img src="../../media/clockingmonkey_logo.png" alt="Logo Clocking Monkey" class="w-75 mt-5">
@@ -133,7 +133,9 @@ export default {
   }
 
   .register{
-    background:  rgba(40, 40, 40, 0.9);
+    background:  rgba(40, 40, 40, 0.8);
+    border-top-left-radius: 10% 50%;
+    border-bottom-left-radius: 10% 50%;
     margin-top: 3%;
     padding: 3%;
   }
